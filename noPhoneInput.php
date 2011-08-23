@@ -61,7 +61,7 @@ a:hover {
 	
 	include("admin/db_helper/db_connect.php");
 	
-	$stmt = $conn->exec("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
+	$stmt = $conn->query("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
 	$noticeRow = $stmt->fetch(PDO::FETCH_OBJ);
 	
 	/****** Print a notice if there is one available *******/
