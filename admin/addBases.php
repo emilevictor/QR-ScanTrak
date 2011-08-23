@@ -92,11 +92,11 @@ Longitude (decimal): <input type="text" name="long" /><br />
 		echo "<h2 id=\"notice\">Base successfully edited</h2>";
 	}
 	// Database connection
-	include("db_helper/db_connect.php");
+	include_once("db_helper/db_connect.php");
   	
   	echo "<h3>Current Bases:</h3>";
   	
-  	$result = mysql_query("SELECT * FROM Bases");
+  	$result = $conn->query("SELECT * FROM Bases");
   	
   	echo "<table border=\"0\" width=\"100%\">
   	<tr>
@@ -109,24 +109,22 @@ Longitude (decimal): <input type="text" name="long" /><br />
   	<th align=\"left\">QR Code</th>
   	</tr>";
   	
-  	while($row = mysql_fetch_array($result)) {
+  	foreach($result->fetchAll(PDO::FETCH_OBJ) as $row) {
   		echo "<tr onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
-  		echo "<td>" . $row['baseID'] . "</td>";
-  		echo "<td>" . $row['baseName'] . "</td>";
-  		echo "<td>" . $row['basePassword'] . "</td>";
-  		echo "<td>" . $row['baseScanPoints'] . "</td>";
-  		echo "<td>" . $row['baseTrivia'] . "</td>";
-  		echo "<td>" . $row['baseAnswer'] . "</td>";
-  		echo "<td><a href=\"" . $row['shortURL'] . ".qr\">QR CODE</a></td>";
-  		echo "<td><a href=\"editBases.php?baseNum=" . $row['baseID'] . "\">EDIT</a></td>";
-  		echo "<td><a href=\"db_helper/baseDelete.php?baseNum=". $row['baseID'] . "\">DELETE</a></td>";
+  		echo "<td>" . $row->baseID . "</td>";
+      echo "<td>" . $row->baseName . "</td>";
+  		echo "<td>" . $row->basePassword . "</td>";
+  		echo "<td>" . $row->baseScanPoints . "</td>";
+  		echo "<td>" . $row->baseTrivia . "</td>";
+  		echo "<td>" . $row->baseAnswer . "</td>";
+  		echo "<td><a href=\"" . $row->shortURL . ".qr\">QR CODE</a></td>";
+  		echo "<td><a href=\"editBases.php?baseNum=" . $row->baseID . "\">EDIT</a></td>";
+  		echo "<td><a href=\"db_helper/baseDelete.php?baseNum=". $row->baseID . "\">DELETE</a></td>";
   		echo "</tr>";
   	}
   	echo "</table>";
   	
   	echo "<br /><h3><a href=\"QR_print.php\">Click here for printable QR Codes</a></h3>";
-  	
-  	mysql_close($con);
 ?>
 <br />
 <a href="index.php"> <- Back to admin</a>

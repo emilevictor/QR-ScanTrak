@@ -58,23 +58,25 @@ a:hover {
 	$baseID = $_GET['baseNum'];
 	
 	/******* DATABASE CONNECTION ********/
-	include("db_helper/db_connect.php");
+	include_once("db_helper/db_connect.php");
 	
-	$result = mysql_query("SELECT * FROM Bases WHERE baseID='". $baseID ."'");
-	$row = mysql_fetch_array($result);
-	echo "<h1>Edit \"". $row['baseName']."\"</h1>";
+	$result = $conn->prepare("SELECT * FROM Bases WHERE baseID=:id");
+	$result->bindValue(':id', $baseID);
+	$result->execute();
+	$row = $result->fetch(PDO::FETCH_OBJ);
+	echo "<h1>Edit \"". $row->baseName."\"</h1>";
 	
 	/******** FORM FOR CURRENT FIELD DATA *********/
 	
 	echo "<form action=\"db_helper/baseEdit.php\" method=\"post\">";
-	echo "Base/QR Code Name: <input type=\"text\" name=\"baseName\" value=\"". $row['baseName'] ."\" /><br />";
-	echo "Base Password (the URL of the base): <input type=\"text\" name=\"pwd\" value=\"". $row['basePassword'] ."\" /><br />";
-	echo "Base Scan Points: <input type=\"text\" name=\"baseScanPoints\" value=\"". $row['baseScanPoints'] ."\" /><br />";
+	echo "Base/QR Code Name: <input type=\"text\" name=\"baseName\" value=\"". $row->baseName ."\" /><br />";
+	echo "Base Password (the URL of the base): <input type=\"text\" name=\"pwd\" value=\"". $row->basePassword ."\" /><br />";
+	echo "Base Scan Points: <input type=\"text\" name=\"baseScanPoints\" value=\"". $row->baseScanPoints ."\" /><br />";
 	echo "Base Trivia (to be displayed as question):<br />";
-	echo "<textarea rows=\"5\" cols=\"100\" name=\"baseTrivia\">".$row['baseTrivia']."</textarea><br/>";
+	echo "<textarea rows=\"5\" cols=\"100\" name=\"baseTrivia\">".$row->baseTrivia."</textarea><br/>";
 	echo "Multi-choice answer (1,2,3,4?): <input type=\"text\" name=\"baseAnswer\" /><br />";
-	echo "Latitude (decimal): <input type=\"text\" name=\"lat\" value=\"". $row['lat'] ."\" /><br />";
-	echo "Longitude (decimal): <input type=\"text\" name=\"long\" value=\"". $row['longitude'] ."\" /><br />";
+	echo "Latitude (decimal): <input type=\"text\" name=\"lat\" value=\"". $row->lat ."\" /><br />";
+	echo "Longitude (decimal): <input type=\"text\" name=\"long\" value=\"". $row->longitude ."\" /><br />";
 	echo "<input type=\"hidden\" name=\"baseID\" value=\"".$baseID."\">";
 	echo "<br /><input type=\"submit\" value=\"Edit Base\"/>";
 	echo "</form>";
