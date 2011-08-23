@@ -61,14 +61,14 @@ a:hover {
 	
 	include("admin/db_helper/db_connect.php");
 	
-	$noticeResult = mysql_query("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
-	$noticeRow = mysql_fetch_array($noticeResult);
+	$stmt = $conn->query("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
+	$noticeRow = $stmt->fetch(PDO::FETCH_OBJ);
 	
 	/****** Print a notice if there is one available *******/
-	if (($noticeRow['title'] != "!")&&($noticeRow['body'] != "!")) {
+	if (($noticeRow->title != "!")&&($noticeRow->body != "!")) {
 		echo "<div id=\"notice\">";
-		echo "<h2>Notice from HQ: ".$noticeRow['title']."</h2>";
-		echo "<p>".$noticeRow['body']."</p></div>";
+		echo "<h2>Notice from HQ: ".$noticeRow->title."</h2>";
+		echo "<p>".$noticeRow->body."</p></div>";
 	}
 	
 	echo "<h1>Phoneless Input Centre</h1>";

@@ -39,10 +39,12 @@ a:hover {
 
 	
 	/******* DATABASE CONNECTION ********/
-	include("db_helper/db_connect.php");
+	include_once("db_helper/db_connect.php");
 	
-	$result = mysql_query("SELECT * FROM Bases WHERE baseID='". $baseID ."'");
-	$row = mysql_fetch_array($result);
+	$result = $conn->prepare("SELECT * FROM Bases WHERE baseID=:id");
+	$result->bindValue(':id', $baseID);
+	$result->execute();
+	$row = $result->fetch(PDO::FETCH_OBJ); //er, why?
 	echo "<h1>Bulk Notify</h1>";
 	
 	/******** FORM FOR CURRENT FIELD DATA *********/

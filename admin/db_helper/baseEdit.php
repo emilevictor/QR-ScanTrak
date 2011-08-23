@@ -4,13 +4,23 @@
 	include("db_connect.php");
 	
 	//Insert what was posted from last form.
-	$sql = "UPDATE Bases
-	SET baseName='".$_POST[baseName]."',basePassword='".$_POST[pwd]."',baseScanPoints='".$_POST[baseScanPoints]."',baseTrivia='".$_POST[baseTrivia]."',baseAnswer='".$_POST[baseAnswer]."',lat='".$_POST[lat]."',longitude='".$_POST[long]."'
-	 WHERE baseID=".$_POST[baseID]."";
-	
-	mysql_query($sql) or die(mysql_error());
-	
-	mysql_close($con);
+	$stmt = $conn->prepare(
+		'UPDATE Bases SET baseName=:name,basePassword=:pass,baseScanPoints=:pts,' . 
+		'baseTrivia=:trivia,baseAnswer=:answer,lat=:lat,longitude=:long WHERE baseID=:id'
+	);
+	$stmt->bindValue(':name', $_POST['baseName']);
+	$stmt->bindValue(':pass', $_POST['pwd']);
+	$stmt->bindValue(':pts', $_POST['baseScanPoints']);
+	$stmt->bindValue(':trivia', $_POST['baseTrivia']);
+	$stmt->bindValue(':answer', $_POST['baseAnswer']);
+	$stmt->bindValue(':lat', $_POST['lat']);
+	$stmt->bindValue(':long', $_POST['long']);
+	$stmt->bindValue(':id', $_POST['baseID']);
+
+	if (!$stmt->execute()) {
+		$err = $stmt->errorInfo();
+		die('Could not update: ' . $err[2]);
+	}
 	
 	header("Location: ../addBases.php?edited=yes");
 ?>

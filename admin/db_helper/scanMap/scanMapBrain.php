@@ -1,26 +1,22 @@
 <?php
 	include("../db_connect.php");
 	
-	$sql = "SELECT * FROM Timestamps WHERE baseID IS NOT NULL ORDER BY timestamp DESC LIMIT 30";
-	
-	$result = mysql_query($sql);
+	$result = $conn->prepare("SELECT * FROM Timestamps WHERE baseID IS NOT NULL ORDER BY timestamp DESC LIMIT 30");
 	
 	$arr = array();
 	
 	/* Fill array */
-	
-	while($baseTableRow = mysql_fetch_array($result)) {
-		$newSql = "SELECT * FROM Bases WHERE baseID='".$baseTableRow['baseID']."'";
-		$newResult = mysql_query($newSql);
-		$newRow = mysql_fetch_assoc($newResult);
-		$arr[] = $newRow;
+	$basestmt = $conn->prepare('SELECT * FROM Bases WHERE baseID=:id');
+
+
+	foreach($result->fetchAll(PDO::FETCH_OBJ) as $baseTableRow) {
+		$basestmt->bindValue(':id', $baseTableRow->baseID);
+		$basestmt->execute();
+		$arr[] = $basestmt->fetch(PDO::FETCH_ASSOC);
 	}
+	echo json_encode($arr);
 	
-	mysql_close($con);
-	
-	$encoded = json_encode($arr);
-	
-	die($encoded);
+	die();
 	
 
 ?>

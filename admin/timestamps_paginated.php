@@ -18,6 +18,15 @@
 	//Attempt connection to UC2011 database
 	include("db_helper/db_connect.php");
 	
+
+
+
+
+	// Fuck. This. You can do it Emile. - rmccue
+
+
+
+
 	/* Amount of elements per page */
 	$perPage = 30;
 	

@@ -3,17 +3,7 @@
 	//Check the authentication
 	include("checkForAuthentication.php");
 
-
-	//Attempt connection to UC2011 database
-	$con = mysql_connect("localhost","xitanto_uc2011","3f8923hfsjkljaJKJ");
-	
-	//If it fails...
-	if (!$con) {
-		die('Couldn\'t connect to the UC2011 database: ' . mysql_error());
-	}
-	
-	//Select the database
-	mysql_select_db("xitanto_urbanchallenge2011", $con);
+	include('db_connect.php');
 	
 	//Insert what was posted from last form.
 	
@@ -23,23 +13,21 @@
 	
 	if (preg_match("/[^0-9]/", $_POST['teamNum'])) {
 		echo "Your team number has an illegal character in it. Only numbers are allowed.";
-		mysql_close($con);
 		die();
 	}
 	
 	if (preg_match("/[^-0-9]/", $_POST['baseScanPoints'])) {
 		echo "You specified a number of scan points which has an illegal character.";
-		mysql_close($con);
 		die();
 	}
 	
 	if ($_POST['comment'] == "") {
 		echo "You did not specify a comment. You must specify a comment for a points addition or subtraction for accountability reasons.";
-		mysql_close($con);
 		die();
 	}
-	
-	
+
+	// Fuck this, I'll come back to it - rmccue
+
 	mysql_query("INSERT INTO Timestamps (timestamp, teamNum, baseScanPoints, comment)
 				VALUES (NOW(), '" . $_POST['teamNum'] . "', '" . $_POST['baseScanPoints'] . "','".$_SESSION['lastname'].": ". $_POST['comment'] . "')") or die(mysql_error());
 	

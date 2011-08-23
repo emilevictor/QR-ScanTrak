@@ -7,16 +7,15 @@
 	
 	
 	//Insert what was posted from last form.
-	$sql = "INSERT INTO Notifications (email, bases)
-	VALUES('$_POST[email]','$_POST[bases]')";
+	$stmt = $conn->bindValue('INSERT INTO Notifications (email, bases) VALUES(:email, :bases)');
+	$stmt->bindValue(':email', $_POST['email']);
+	$stmt->bindValue(':bases', $_POST['bases']);
 	
-	if (!mysql_query($sql,$con))
-	  {
-	  die('Error: ' . mysql_error());
-	  }
-	echo "Successfully added notification for email: " . $_POST[email];
-	
-	mysql_close($con);
+	if (!$stmt->execute()) {
+		$err = $stmt->errorInfo();
+		die('Error: ' . $err[2]);
+	}
+	echo "Successfully added notification for email: " . $_POST['email'];
 	
 	echo "<br /><img src=\"images/mrbean.jpg\">";
 	echo "<br />Emile says hi, Matt.";

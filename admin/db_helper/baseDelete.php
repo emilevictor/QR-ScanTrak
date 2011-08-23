@@ -3,12 +3,12 @@
 	include("db_connect.php");
   	
 	//Query the database
-  	$result = mysql_query("DELETE FROM Bases WHERE baseID='" . $_GET['baseNum'] . "'");  	
+  	$result = $conn->prepare("DELETE FROM Bases WHERE baseID=:id");
+    $result->bindValue(':id', $_GET['baseNum']);
   	
-  	if (!$result) {
+  	if (!$result->execute()) {
   		echo "I was unable to delete base " . $_GET['baseNum'];
   		die("<a href=\"../addBases.php\">Back to team adding with you!</a>");
   	}
   	header("Location: ../addBases.php");
-  	mysql_close($con);
 ?>

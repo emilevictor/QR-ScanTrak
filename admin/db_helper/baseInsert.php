@@ -50,16 +50,24 @@ tr { background-color: #333333}
 	$strShortUrl = GooglPHP::shortURL($strLongUrl);
 	
 	//Insert what was posted from last form.
-	$sql = "INSERT INTO Bases (baseName, basePassword, baseScanPoints, baseTrivia, baseAnswer, shortURL, lat, longitude)
-	VALUES('$_POST[baseName]','$_POST[basePassword]','$_POST[baseScanPoints]','$_POST[baseTrivia]','$_POST[baseAnswer]','$strShortUrl','$_POST[lat]','$_POST[long]')";
+	$stmt = $conn->prepare(
+		'INSERT INTO Bases (baseName, basePassword, baseScanPoints, baseTrivia, baseAnswer, shortURL, lat, longitude)' .
+		'VALUES(:name, :pass, :pts, :trivia, :answer, :url, :lat, :lat)'
+	);
+	$stmt->bindValue(':name',   $_POST['baseName']);
+	$stmt->bindValue(':pass',   $_POST['basePassword']);
+	$stmt->bindValue(':pts',    $_POST['baseScanPoints']);
+	$stmt->bindValue(':trivia', $_POST['baseTrivia']);
+	$stmt->bindValue(':answer', $_POST['baseAnswer']);
+	$stmt->bindValue(':url',    $strShortUrl);
+	$stmt->bindValue(':lat',    $_POST['lat']);
+	$stmt->bindValue(':long',   $_POST['long']);
 	
-	if (!mysql_query($sql,$con))
-	  {
-	  die('Error: ' . mysql_error());
-	  }
-	echo "Successfully added base " . $_POST[teamName];
-	
-	mysql_close($con);
+	if (!$stmt->execute()) {
+		$err = $stmt->errorInfo();
+		die('Error: ' . $err[2]);
+	}
+	echo "Successfully added base " . $_POST['teamName'];
 	
 	echo "<br /><img src=\"images/mrbean.jpg\">";
 	echo "<br />Emile says hi, Matt.";

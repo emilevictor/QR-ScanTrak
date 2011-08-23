@@ -20,9 +20,11 @@
 //$sql = "ALTER TABLE Bases ADD shortURL varchar(100) AFTER baseEasyName";
 
 // Execute query
-	mysql_query($sql,$con);
-	
-	mysql_close($con);
+	$stmt = $conn->prepare($sql);
+	if (!$stmt->execute()) {
+		die('unsuccessful');
+	}
+
 	echo "successful completion";
 	
 	echo $sql;

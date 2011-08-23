@@ -53,11 +53,11 @@ Emergency Contacts: <input type="text" name="emergencyPhones" /><br />
 
 <?php 
 	//Database connection
-	include("db_helper/db_connect.php");
+	include_once("db_helper/db_connect.php");
   	
   	echo "<h3>Current Teams</h3><br />";
   	
-  	$result = mysql_query("SELECT * FROM Teams");
+  	$result = $conn->query("SELECT * FROM Teams");
   	
   	echo "<table border=\"0\" width=\"800px\">
   	<tr>
@@ -67,19 +67,17 @@ Emergency Contacts: <input type="text" name="emergencyPhones" /><br />
   	<th align=\"left\">Emergency Contacts</th>
   	</tr>";
   	
-  	while($row = mysql_fetch_array($result)) {
+  	foreach($result->fetchAll(PDO::FETCH_OBJ) as $row) {
   		echo "<tr onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
-  		echo "<td>" . $row['teamNum'] . "</td>";
-  		echo "<td>" . $row['teamName'] . "</td>";
-  		echo "<td>" . $row['password'] . "</td>";
-  		echo "<td>" . $row['emergencyPhone'] . "</td>";
-  		echo "<td><a href=\"editTeams.php?teamNum=" . $row['teamNum'] . "\">EDIT</a></td>";
-  		echo "<td><a href=\"db_helper/teamDelete.php?teamNum=". $row['teamNum'] . "\">DELETE</a></td>";
+  		echo "<td>" . $row->teamNum . "</td>";
+  		echo "<td>" . $row->teamName . "</td>";
+  		echo "<td>" . $row->password . "</td>";
+  		echo "<td>" . $row->emergencyPhone . "</td>";
+  		echo "<td><a href=\"editTeams.php?teamNum=" . $row->teamNum . "\">EDIT</a></td>";
+  		echo "<td><a href=\"db_helper/teamDelete.php?teamNum=". $row->teamNum . "\">DELETE</a></td>";
   		echo "</tr>";
   	}
   	echo "</table>";
-  	
-  	mysql_close($con);
 ?>
 <br />
 <a href="index.php"> <- Back to admin</a>

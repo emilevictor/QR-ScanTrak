@@ -7,28 +7,33 @@
   	
 	
 	/* Old code */
-  	$result = mysql_query("SELECT * FROM Teams WHERE teamNum='".$_POST['tNum']."'");
-  	$row = mysql_fetch_array($result);
+  	$result = $conn->prepare("SELECT * FROM Teams WHERE teamNum=:num");
+  	$result->bindValue(':num', $_POST['tNum']);
+  	$result->execute();
+  	$row = $result->fetch(PDO::FETCH_OBJ);
   	/* END OLD CODE */
   	
-  	mysql_query("INSERT INTO Timestamps (timestamp, teamNum, baseID, baseScanPoints, comment)
-						VALUES (NOW(), '" . $_POST['tNum'] . "', 'Points check','0','Checked points balance')") or die(mysql_error());
+  	$stmt = $conn->prepare(
+	  	"INSERT INTO Timestamps (timestamp, teamNum, baseID, baseScanPoints, comment) " .
+		"VALUES (NOW(), :num, 'Points check','0','Checked points balance')"
+	);
+	$stmt->bindValue(':num', $_POST['tNum']);
+	$stmt->execute();
   	
-  	$sqlLeaderboard = "SELECT * FROM Teams ORDER BY totalScore DESC LIMIT 10";
-	$resultLeaderboard = mysql_query($sqlLeaderboard);
+  	$leaderboard = $conn->query("SELECT * FROM Teams ORDER BY totalScore DESC LIMIT 10");
 	//$arr = array(0 => 0);
 	$position = 1;
 
-	while ($resultRows = mysql_fetch_array($resultLeaderboard, MYSQL_NUM)) {
+	foreach ($leaderboard->fetchAll(PDO::FETCH_NUM) as $resultRows) {
     	//printf("ID: %s  Name: %s", $row[0], $row[1]);
-    	if ((int)$resultRows[0] == (int)$row['teamNum']) {
+    	if ((int) $resultRows[0] === (int) $row->teamNum) {
     		break;
     	} else {
     		$position++;
     	}
 	}
 	
-  	if ($row['password'] != $_POST['pwd']) {
+  	if ($row->password != $_POST['pwd']) {
   		header('Location: ../checkPoints.php?success=epicfail');
   	}
   	
@@ -79,18 +84,19 @@ a:hover {
   	<?php
   	
   	/***** Get the total score from database and set into local variable ******/
-  	$result = mysql_query("SELECT teamNum, SUM(baseScanPoints) FROM Timestamps WHERE teamNum='" . $_POST['tNum'] . "' GROUP BY teamNum") or die(mysql_error());
-	$row = mysql_fetch_array($result);
+  	$result = $conn->prepare("SELECT teamNum, SUM(baseScanPoints) FROM Timestamps WHERE teamNum=:num GROUP BY teamNum");
+  	$result->bindValue(':num', $_POST['tNum']);
+	$row = $result->fetch(PDO::FETCH_ASSOC);
 	$totalScore = $row['SUM(baseScanPoints)'];
 	
-	$noticeResult = mysql_query("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
-	$noticeRow = mysql_fetch_array($noticeResult);
+	$result = $conn->query("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
+	$row = $result->fetch(PDO::FETCH_OBJ);
 	
 	/****** Print a notice if there is one available *******/
-	if (($noticeRow['title'] != "!")&&($noticeRow['body'] != "!")) {
+	if (($row->title != "!")&&($row->body != "!")) {
 		echo "<div id=\"notice\">";
-		echo "<h2>Notice from HQ: ".$noticeRow['title']."</h2>";
-		echo "<p>".$noticeRow['body']."</p></div>";
+		echo "<h2>Notice from HQ: ".$row->title."</h2>";
+		echo "<p>".$row->body."</p></div>";
 	}
 	
 	echo "<h2>Team ".$_POST['tNum']."'s total score is <u>".$totalScore."</u> points.";
@@ -111,7 +117,9 @@ a:hover {
   	
   	echo "<hr><h2>Most recent check-ins. Current time is ".date('G:i:s')."</h2>";
   	
-  	$result = mysql_query("SELECT * FROM Timestamps WHERE teamNum='" . $_POST['tNum'] . "' ORDER BY timestamp DESC LIMIT 20");
+  	$result = $conn->prepare("SELECT * FROM Timestamps WHERE teamNum=:num ORDER BY timestamp DESC LIMIT 20");
+  	$result->bindValue(':num', $_POST['tNum']);
+  	$result->execute();
   	
   	echo "<table border=\"0\" width=\"100%\">
 	  <tr>
@@ -120,16 +128,14 @@ a:hover {
 	  <th align=\"left\">Points scanned</th>
 	  </tr>";
   	
-    while($row = mysql_fetch_array($result)) {
+    foreach($result->fetchAll(PDO::FETCH_OBJ) as $row) {
   		echo "<tr>";
-  		echo "<td>" . $row['baseID'] . "</td>";
-  		echo "<td>" . $row['timestamp'] . "</td>";
-  		echo "<td>" . $row['baseScanPoints'] . "</td>";
+  		echo "<td>" . $row->baseID . "</td>";
+  		echo "<td>" . $row->timestamp . "</td>";
+  		echo "<td>" . $row->baseScanPoints . "</td>";
   		echo "</tr>";
   	}
   	echo "</table>";
-  	
-  	mysql_close($con);
 ?>
 <br />
 <a href="../checkPoints.php"> <- Back to Points check</a>

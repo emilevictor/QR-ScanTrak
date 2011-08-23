@@ -2,12 +2,10 @@
 
 /* The database connections - required for each page */
 
-	$con = mysql_connect("localhost","xitanto_uc2011","3f8923hfsjkljaJKJ");
-	if (!$con)
-	  {
-	  die('Could not connect: ' . mysql_error());
-	  }
-	
-  	mysql_select_db("xitanto_urbanchallenge2011", $con);
-
+	try {
+		$conn = new PDO("mysql:host=localhost;dbname=xitanto_urbanchallenge2011", "xitanto_uc2011","3f8923hfsjkljaJKJ");
+	}
+	catch (Exception $e) {
+		die('Could not connect: ' . $e->getMessage());
+	}
 ?>
