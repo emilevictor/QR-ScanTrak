@@ -1,27 +1,19 @@
 <?php
 
-	//Attempt connection to UC2011 database
-	$con = mysql_connect("localhost","xitanto_uc2011","3f8923hfsjkljaJKJ");
-	
-	//If it fails...
-	if (!$con) {
-		die('Couldn\'t connect to the UC2011 database: ' . mysql_error());
-	}
-	
-	//Select the database
-	mysql_select_db("xitanto_urbanchallenge2011", $con);
+	include('db_connect.php');
 	
 	//Insert what was posted from last form.
-	$sql = "UPDATE Teams
-	SET teamName='".$_POST[teamName]."',password='".$_POST[pwd]."',emergencyPhone='".$_POST[emergencyPhone]."'
-	WHERE teamNum=".$_POST[teamNum]."" or die(mysql_error());
+	$stmt = $conn->prepare('UPDATE Teams SET teamName=:name,password=:pass,emergencyPhone=:phone WHERE teamNum=:id');
+	$stmt->bindValue(':name',  $_POST['teamName']);
+	$stmt->bindValue(':pass',  $_POST['pwd']);
+	$stmt->bindValue(':phone', $_POST['emergencyPhone']);
+	$stmt->bindValue(':id',    $_POST['teamNum']);
 	
-	if (!mysql_query($sql,$con)) {
-	  die('Error: ' . mysql_error());
+	if (!$stmt->execute()) {
+		$err = $stmt->errorInfo();
+		die('Error: ' . $err[2]);
 	}
-	echo "Successfully edited team " . $_POST[teamName];
-	
-	mysql_close($con);
+	echo "Successfully edited team " . $_POST['teamName'];
 	
 	echo "<br /><img src=\"images/mrbean.jpg\">";
 	echo "<br />Emile says hi, Matt.";
