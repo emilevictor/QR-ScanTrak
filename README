@@ -1,0 +1,23 @@
+QR-ScanTrak
+by Emile Victor
+
+This piece of software was originally written in 2010/2011 to handle a large scale Scouting activity that takes place yearly in Brisbane called Urban Challenge. On Urban Challenge, a number of teams of scouts transport themselves around the city of Brisbane (or the city of your choosing) to bases and roadblocks run by older scouting members.
+
+Bases are permanent, whereas roadblocks move and are run by Rovers (those aforementioned older scouting members), usually in uniform, who will give points to teams based upon their successful completion of a challenge.
+
+QR-ScanTrak serves four purposes.
+
+1. It automatically tracks the points each team has, showing them on a scoreboard live (using AJAX)
+2. It provides the current ranking/placement of each team to them through the use of a login page.
+3. It allows teams to scan QR codes in order to collect supplementary points. This can be accomplished with a smartphone. The QR codes are generated and formatted correctly by the system prior to the game's commencement, and scattered across the city by Rovers.
+4. It allows rovers to add and subtract points from teams, given they provide a reason to do so. This facilitates the bases and roadblocks by allowing easy modification of scores.
+
+Overall, it provides a layer of accountability to the actions of the venturers and rovers.
+
+The success of Urban Challenge 2011 was partly down to the application of this system. The Venturer Scouts involved described it as the best camp they had ever been on, which is a big call.
+
+We are currently looking for volunteers to port the code from mysql_ PHP functions over to PDO bindings in order to remove the SQL injection issues it has. If you are interested, contact me via Facebook (Emile Victor) or email (emilevictor@gmail.com).
+
+If you are interested in using this, please contact me. Donations are appreciated, as the code took me a few months to write, and took up a lot of my free time.
+
+-- Emile Victor
