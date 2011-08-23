@@ -41,9 +41,11 @@
 			echo "Illegal characters in your password.";
 			die();
 		}
-		$result = mysql_query("SELECT * FROM Teams WHERE teamNum='".$_POST['tNum']."'") or die(mysql_error());
-		$row = mysql_fetch_array($result);
-		if ($row['password'] == $_POST['pwd']) {
+		$result = $conn->prepare("SELECT * FROM Teams WHERE teamNum=:id");
+		$result->bindValue(':id', $_POST['tNum']);
+		$result->execute();
+		$row = $result->fetch(PDO::FETCH_OBJ);
+		if ($row->password == $_POST['pwd']) {
 			$userPassComboCorrect = TRUE;
 		}
 		
@@ -55,46 +57,70 @@
 		//If it has, then spit out an error and die.
 		//If not, add it to the total.
 		if ($userPassComboCorrect == TRUE) {
+
+			// Let's prepare some startments, to avoid doing them 10 times
+			$stmt = $conn->prepare('SELECT * FROM Bases WHERE basePassword=:pass');
+
+			$ts_select = $conn->prepare("SELECT * FROM Timestamps WHERE teamNum=:num AND baseID=:id");
+			$ts_select->bindValue(':num', $_POST['tNum']);
+
+			$pw_stmt = $conn->prepare("SELECT * FROM Bases WHERE basePassword=:pass");
+
+			$ts_insert = $conn->prepare(
+				"INSERT INTO Timestamps (timestamp, teamNum, baseID, baseScanPoints, comment) " .
+				"VALUES (NOW(), :team, :id, :pts, 'No Phone input')"
+			);
+			$ts_insert->bindValue(':team', $_POST['tNum']);
+
+			$points = $conn->prepare('SELECT teamNum, SUM(baseScanPoints) FROM Timestamps WHERE teamNum=:num GROUP BY teamNum');
+			$points->bindValue(':num', $_POST['tNum']);
+
+			$update_score = $conn->prepare("UPDATE Teams SET totalScore=:score WHERE teamNum=:num");
+			$update_score->bindValue(':num', $_POST['tNum']);
 			
-			while ($currentCode < 10) {
+			while ($currentCode < 9) {
+				$currentCode++;
 				
 				if ($_POST[$currentCode] != "") {
-				
-					$result = mysql_query("SELECT * FROM Bases WHERE basePassword='" . $_POST[$currentCode] . "'") or die(mysql_error());
-					$row = mysql_fetch_array($result);
+					$stmt->bindValue(':pass', $_POST[$currentCode]);
+					$stmt->execute();
+					$row = $stmt->fetch(PDO::FETCH_OBJ);
 					
-					if ($row['baseTrivia'] == "!") {
-						$result = mysql_query("SELECT * FROM Timestamps WHERE teamNum='".$_POST['tNum']."' AND baseID='".$_POST[$currentCode]."'");
-						if(mysql_num_rows($result) == 0) {
-							//If you are at this point, the user has been authenticated (dodgily, might I say)...
-							
-							//Check the amount of points to be added to the team.
-							$result = mysql_query("SELECT * FROM Bases WHERE basePassword='" . $_POST[$currentCode] . "'") or die(mysql_error());
-							$row = mysql_fetch_array($result);
-							$pointsToBeAdded = $row['baseScanPoints'];
-							$baseID = $row['baseID'];
-							
-							//Update the timestamps table.
-							mysql_query("INSERT INTO Timestamps (timestamp, teamNum, baseID, baseScanPoints, comment)
-						VALUES (NOW(), '" . $_POST['tNum'] . "', '" . $baseID . "','" . $pointsToBeAdded . "','No Phone input')") or die(mysql_error());
-							
-							//Update total scores.
-							$result = mysql_query("SELECT teamNum, SUM(baseScanPoints) FROM Timestamps WHERE teamNum='" . $_POST['tNum'] . "' GROUP BY teamNum") or die(mysql_error());
-							$row = mysql_fetch_array($result);
-							$totalScore = $row['SUM(baseScanPoints)'];
-							$result = mysql_query("SELECT * FROM Teams WHERE teamNum='".$_POST['tNum']."'");
-							$row = mysql_fetch_array($result);
-							mysql_query("UPDATE Teams SET totalScore='".$totalScore."' WHERE teamNum='".$_POST['tNum']."'")  or die(mysql_error());
-							echo "Added " . $pointsToBeAdded . " points to team " . $_POST['tNum'] . ". New total score is " . $totalScore . ".<br />";
-							
-						} else {
-							echo "You have already scanned code ".$currentCode.". Please do not enter it again. You have received no points for that code. <br />";
-						}
-					} else {
-						echo "This code requires trivia to be completed. In order to complete this code, go to <a href=\"http://www.urbanchallenge.com.au/index.php?q=".$row['basePassword']."\">this page</a>.<br />";
+					if ($row->baseTrivia != "!") {
+						echo "This code requires trivia to be completed. In order to complete this code, go to <a href=\"http://www.urbanchallenge.com.au/index.php?q=".$row->basePassword."\">this page</a>.<br />";
+						continue;
 					}
+
+					$ts_select->bindValue(':id', $_POST[$currentCode]);
+					$ts_select->execute();
+					if ($ts_select->rowCount() !== 0) {
+						echo "You have already scanned code ".$currentCode.". Please do not enter it again. You have received no points for that code. <br />";
+						continue;
+					}
+
+					//If you are at this point, the user has been authenticated (dodgily, might I say)...
+						
+					//Check the amount of points to be added to the team.
+					$pw_stmt->bindValue(':pass', $_POST[$currentCode]);
+					$pw_stmt->execute();
+					$row = $pw_stmt->fetch(PDO::FETCH_OBJ);
+					$pointsToBeAdded = $row->baseScanPoints;
+					$baseID = $row->baseID;
+					
+					//Update the timestamps table.
+					$ts_insert->bindValue(':id', $baseID);
+					$ts_insert->bindValue(':pts', $baseID);
+					$ts_insert->execute();
+					
+					//Update total scores.
+					$points->execute();
+					$row = $points->fetch(PDO::FETCH_ASSOC);
+					$totalScore = $row['SUM(baseScanPoints)'];
+
+					$update_score->bindValue(':score', $totalScore);
+					$update_score->execute();
+					echo "Added " . $pointsToBeAdded . " points to team " . $_POST['tNum'] . ". New total score is " . $totalScore . ".<br />";
 				}
-				$currentCode++;
 			}
 			echo "END OF LINE.<br />";
 		}
