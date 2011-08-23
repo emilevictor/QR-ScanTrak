@@ -1,0 +1,88 @@
+@charset "utf-8";
+/* CSS Document */
+
+body,td,th {
+	color: #FFF;
+}
+body {
+	background-color: #000;
+}
+
+a:link {
+	color:#FC0;	
+}
+
+a:visited {
+	color:#FC0;	
+}
+
+a:active {
+	color:#FC0;	
+}
+
+a:hover {
+	color:#FF0;	
+}
+
+/** START DIVS **/
+
+.wrapper {
+	width:100%;
+}
+
+.leaderboardTable {
+	float:left;
+	width:50%;
+}	
+
+.timestampTable {
+	float:left;
+	width:50%;
+}
+
+.operations {
+	clear:both;
+	width:40%;
+	margin:0px;
+	padding:0px;
+	float:left;
+}
+
+/** END DIVS **/
+
+
+/** START MENU **/
+
+#nav-menu {
+	margin-top:5px;
+	margin-bottom:10px;
+}
+
+#nav-menu ul {
+	font-size:20px;
+	/*list-style: none;*/
+	padding: 0;
+	margin: 0;
+}
+
+#nav-menu a {
+	padding: 5px 2px 2px 2px;
+}
+
+#nav-menu a:hover {
+	background-color:#ffffcc;
+	color:#333333;
+}
+
+#nav-menu li {
+	/*float: left;*/
+	margin: 0 0.15em;
+}
+
+
+/** END MENU **/
+
+tr { background-color: #333333}
+  .initial { background-color: #333333; color:#000000 }
+  .normal { background-color: #333333 }
+  .highlight { background-color: #666666 }
