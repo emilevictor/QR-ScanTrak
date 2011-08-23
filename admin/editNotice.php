@@ -60,8 +60,8 @@ a:hover {
 	/******* DATABASE CONNECTION ********/
 	include("db_helper/db_connect.php");
 	
-	$result = mysql_query("SELECT * FROM Notice WHERE noticeNum=1");
-	$row = mysql_fetch_array($result);
+	$result = $conn->query("SELECT * FROM Notice WHERE noticeNum=1");
+	$row = $result->fetch(PDO::FETCH_OBJ);
 	echo "<h1>Edit the HQ notice to participants.</h1>";
 	
 	echo "<p>If you do not wish to show a notice, simply place a ! in either the title or the body. This notice is shown on the
@@ -70,9 +70,9 @@ a:hover {
 	/******** FORM FOR CURRENT FIELD DATA *********/
 	
 	echo "<form action=\"db_helper/noticeEdit.php\" method=\"post\">";
-	echo "Title: <input type=\"text\" name=\"title\" value=\"". $row['title'] ."\" /><br />";
+	echo "Title: <input type=\"text\" name=\"title\" value=\"". $row->title ."\" /><br />";
 	echo "Body:<br />";
-	echo "<textarea rows=\"5\" cols=\"100\" name=\"body\">".$row['body']."</textarea><br/>";
+	echo "<textarea rows=\"5\" cols=\"100\" name=\"body\">".$row->body."</textarea><br/>";
 	echo "<br /><input type=\"submit\" value=\"Submit New Notice\"/>";
 	echo "</form>";
 	

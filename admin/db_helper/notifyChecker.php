@@ -21,19 +21,26 @@
 	$content = $connection->get('account/verify_credentials');
 
 	//Query for all notifications from notifications table.
-	$result = mysql_query("SELECT * FROM Notifications") or die(mysql_error());
+	$stmt = $conn->prepare("SELECT * FROM Notifications");
+	if (!$stmt->execute()) {
+		$err = $stmt->errorInfo();
+		die('Could not fetch notifications: ' . $err[2]);
+	}
 	$emailString = "";
 	$twoMinsAgo = mktime(date("h")-8,date("i")-2,date("s"),date("m"),date("d")+1,date("Y"));
 	//Loop through each notification email:base pair.
-	while($notificationArray = mysql_fetch_array($result)) {
-		$basesArray = explode(",", $notificationArray['bases']);
+	foreach($stmt->fetchAll(PDO::FETCH_OBJ) as $notificationArray) {
+		$basesArray = explode(",", $notificationArray->bases);
 		
 		foreach($basesArray as $baseElement) {
 			//echo $baseElement;
-			$queryTimestamps = mysql_query("SELECT * FROM Timestamps WHERE baseID=".(int)$baseElement." ORDER BY actionID DESC") or die(mysql_error());
+			$queryTimestamps = $conn->prepare("SELECT * FROM Timestamps WHERE baseID=:id ORDER BY actionID DESC");
+			$queryTimestamps->bindValue(':id', (int) $baseElement);
+			$queryTimestamps->execute();
+
 			//Get latest occurance
-			$queryTimestampsArray = mysql_fetch_array($queryTimestamps);
-			$phpDate = strtotime($queryTimestampsArray['timestamp']);
+			$queryTimestampsArray = $queryTimestamps->fetch(PDO::FETCH_OBJ);
+			$phpDate = strtotime($queryTimestampsArray->timestamp);
 			if ($phpDate > $twoMinsAgo) {
 				//Appending operator .=
 				$emailString .= $baseElement;
@@ -43,12 +50,11 @@
 		
 		if ($emailString != "") {
 			echo "Before tweet ";
-			$connection->post('statuses/update', array('status' => "Zombie Checkin: ".$emailString." @".$notificationArray['email'].""));
+			$connection->post('statuses/update', array('status' => "Zombie Checkin: ".$emailString." @".$notificationArray->email));
 			echo "Tweeted";
 			$emailString = "";
 		}
 		
 	}
 
-	mysql_close($con);
 ?>

@@ -77,28 +77,30 @@ a:hover {
 		$domain = parse_url($referer); //Parse the URL otherwise
 	}
 	
-	$result = mysql_query("SELECT * FROM Bases WHERE basePassword='". $val ."'");
-	$row = mysql_fetch_array($result);
+	$stmt = $conn->prepare('SELECT * FROM Bases WHERE basePassword=:pass LIMIT 1');
+	$stmt->bindValue(':pass', $val);
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_OBJ);
 	
 	//if ($domain['host'] == $google || $domain['host'] == $wwwgoogle) {
 			/*Make the array for all of the activity bases*/
-	if ($row['baseScanPoints'] != NULL) {
+	if ($row->baseScanPoints != NULL) {
 		echo "<img src=\"images/UCLogoInverted.jpg\"><br />";
-		echo "<h1>Welcome to ".$row['baseName']."</h1>";
+		echo "<h1>Welcome to ".$row->baseName."</h1>";
 		echo "<form action=\"addPoints.php\" method=\"post\">";
 		echo "ID Number: <input type=\"text\" name=\"tNum\" /><br />";
 		echo "Team Password: <input type=\"password\" name=\"pwd\" /><br />";
 		$boolRequireTrivia = 0;
-		if ($row['baseTrivia'] != "!") {
+		if ($row->baseTrivia != "!") {
 			echo "You can only submit a trivia-based QR code ONCE. Make sure that your answer is correct before submission!!<br />";
-			echo "Trivia Question: ".$row['baseTrivia'];
+			echo "Trivia Question: ".$row->baseTrivia;
 			echo "<br />";
 			echo "What number is the answer? (type answer like \"1\", not \"one\") <input type=\"text\" name=\"triviaAnswer\" />";
 			$boolRequireTrivia = 1;
 		}
-		echo "<input type=\"hidden\" name=\"baseEasyName\" value=\"".$row['baseEasyName']."\">";
-		echo "<input type=\"hidden\" name=\"baseID\" value=\"".$row['baseID']."\">";
-		echo "<input type=\"hidden\" name=\"basePassword\" value=\"".$row['basePassword']."\">";
+		echo "<input type=\"hidden\" name=\"baseEasyName\" value=\"".$row->baseEasyName."\">";
+		echo "<input type=\"hidden\" name=\"baseID\" value=\"".$row->baseID."\">";
+		echo "<input type=\"hidden\" name=\"basePassword\" value=\"".$row->basePassword."\">";
 		echo "<input type=\"hidden\" name=\"boolRequireTrivia\" value=\"".$boolRequireTrivia."\">";
 		echo "<br /><input type=\"submit\" />";
 		echo "</form>";

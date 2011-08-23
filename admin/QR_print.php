@@ -73,21 +73,21 @@ p.page {
 
 <?php 
 	//Connect to DB
-	include("db_helper/db_connect.php");
+	include_once("db_helper/db_connect.php");
   	
-  	$result = mysql_query("SELECT * FROM Bases");
+  	$result = $conn->query("SELECT * FROM Bases");
   	
   	$count = 1;
   	
-  	while ($row = mysql_fetch_array($result)) {
+  	foreach ($result->fetchAll(PDO::FETCH_OBJ) as $row) {
   		
   		echo "<div id=\"label\">";
   		echo "<div id=\"labelInner\">";
-	  		echo "<img class=\"qr\" src=\"" . $row['shortURL'] . ".qr\">";
+	  		echo "<img class=\"qr\" src=\"" . $row->shortURL . ".qr\">";
 		  		echo "<div id=\"labelText\">";
-		  		echo "<p class=\"baseID\">" . $row['baseID'] . "</p><br />";
-		    	echo "<p class=\"baseName\">" . $row['baseName'] . "</p><br />";
-		    	echo "<p class=\"basePassword\">" . $row['basePassword'] . "</p><br />";
+		  		echo "<p class=\"baseID\">" . $row->baseID . "</p><br />";
+		    	echo "<p class=\"baseName\">" . $row->baseName . "</p><br />";
+		    	echo "<p class=\"basePassword\">" . $row->basePassword . "</p><br />";
 		    	echo "</div>";
 	    	echo "</div>";
   		echo "</div>";

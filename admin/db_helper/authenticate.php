@@ -7,13 +7,15 @@
 	$pwd = sha1($_POST['password']);
 	
 	//Insert what was posted from last form.
-	$result = mysql_query("SELECT * FROM Admins
-	WHERE username='".$_POST[username]."' AND password='".$pwd."'") or die(mysql_error());
+	$result = $conn->prepare("SELECT * FROM Admins WHERE username=:user AND password=:pass");
+	$result->bindValue(':user', $_POST[username]);
+	$result->bindValue(':pass', $pwd);
+	$result->execute();
 	
-	$row = mysql_fetch_array($result);
+	$row = $result->fetch(PDO::FETCH_OBJ);
 	
 	// If username doesn't exist
-	if(mysql_num_rows($result) == 0) {
+	if($result->rowCount() === 0) {
 		/*Wrong password/username combo*/
 		header('Location: ../login.php?success=wrongcredentials');
 		die();
@@ -22,13 +24,10 @@
 		session_start();
   		header("Cache-control: private");
   		$_SESSION["access"] = "granted";
-  		$_SESSION["lastname"] = $row['lastName'];
-  		$_SESSION["gender"] = $row['gender'];
+  		$_SESSION["lastname"] = $row->lastName;
+  		$_SESSION["gender"] = $row->gender;
   		header("Location: ../index.php");
 		die();
 	}
-	
-	
-	mysql_close($con);
 
 ?>

@@ -44,16 +44,18 @@ a:hover {
 	/******* DATABASE CONNECTION ********/
 	include("db_helper/db_connect.php");
 	
-	$result = mysql_query("SELECT * FROM Teams WHERE teamNum='". $teamNum ."'");
-	$row = mysql_fetch_array($result);
-	echo "<h1>Edit \"". $row['teamName']."\"</h1>";
+	$result = $conn->prepare("SELECT * FROM Teams WHERE teamNum=:id");
+	$result->bindValue(':id', $teamNum);
+	$result->execute();
+	$row = $result->fetch(PDO::FETCH_OBJ);
+	echo "<h1>Edit \"". $row->teamName."\"</h1>";
 	
 	/******** FORM FOR CURRENT FIELD DATA *********/
 	
 	echo "<form action=\"db_helper/teamEdit.php\" method=\"post\">";
-	echo "Team Name: <input type=\"text\" name=\"teamName\" value=\"". $row['teamName'] ."\" /><br />";
-	echo "Team Password: <input type=\"text\" name=\"pwd\" value=\"". $row['password'] ."\" /><br />";
-	echo "Emergency Phone Numbers: <input type=\"text\" name=\"emergencyPhone\" value=\"". $row['emergencyPhone'] ."\" /><br />";
+	echo "Team Name: <input type=\"text\" name=\"teamName\" value=\"". $row->teamName ."\" /><br />";
+	echo "Team Password: <input type=\"text\" name=\"pwd\" value=\"". $row->password ."\" /><br />";
+	echo "Emergency Phone Numbers: <input type=\"text\" name=\"emergencyPhone\" value=\"". $row->emergencyPhone ."\" /><br />";
 	echo "<input type=\"hidden\" name=\"teamNum\" value=\"".$teamNum."\">";
 	echo "<br /><input type=\"submit\" value=\"Edit Team\"/>";
 	echo "</form>";
