@@ -1,11 +1,11 @@
 <?php
 	//Attempt connection to UC2011 database
-	include("db_connect.php");
+	$conn = include 'db_connect.php';
 	
-	$sql = "SELECT * FROM Timestamps ORDER BY timestamp DESC LIMIT 30";
-	
-	$result = mysql_query($sql);
-	
+	//Prepare the PDO statement and execute.
+	$stmt = $conn->prepare('SELECT * FROM Timestamps ORDER BY timestamp DESC LIMIT 30');
+	$stmt->execute();
+		
 	echo "<table border=\"0\" width=\"100%\">
 	<tr>
 	  <th align=\"left\">Team number</th>
@@ -15,7 +15,7 @@
 	  <th align=\"left\">Comment</th>
   	</tr>";
 	
-	while($row = mysql_fetch_array($result)) {
+	while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 	  	echo "<tr onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
 	  	echo "<td>" . $row['teamNum'] . "</td>";
 	  	if ($row['baseID'] == NULL) {

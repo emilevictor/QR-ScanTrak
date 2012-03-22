@@ -1,5 +1,5 @@
 <?php
-	include("../db_connect.php");
+	$conn = include '../db_connect.php';
 	
 	$result = $conn->prepare("SELECT * FROM Timestamps WHERE baseID IS NOT NULL ORDER BY timestamp DESC LIMIT 30");
 	

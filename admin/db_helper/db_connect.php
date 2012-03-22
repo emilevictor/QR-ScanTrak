@@ -8,4 +8,6 @@
 	catch (Exception $e) {
 		die('Could not connect: ' . $e->getMessage());
 	}
+	
+	return $conn;
 ?>
