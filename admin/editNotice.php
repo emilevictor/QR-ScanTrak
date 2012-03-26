@@ -58,7 +58,7 @@ a:hover {
 	$baseID = $_GET['baseNum'];
 	
 	/******* DATABASE CONNECTION ********/
-	include("db_helper/db_connect.php");
+	$conn = include 'db_helper/db_connect.php';
 	
 	$result = $conn->query("SELECT * FROM Notice WHERE noticeNum=1");
 	$row = $result->fetch(PDO::FETCH_OBJ);
