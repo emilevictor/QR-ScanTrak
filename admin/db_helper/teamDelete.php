@@ -1,6 +1,6 @@
 <?php
 
-    include('db_connect.php');
+    $conn = include 'db_connect.php';
   	
   	$result = $conn->prepare('DELETE FROM Teams WHERE teamNum=:id');
     $result->bindValue(':id', $_GET['teamNum']);

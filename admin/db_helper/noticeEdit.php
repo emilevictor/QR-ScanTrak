@@ -43,7 +43,7 @@ tr { background-color: #333333}
 <?php
 
 	//Attempt connection to UC2011 database
-	include("db_connect.php");
+	$conn = include 'db_connect.php';
 	
 	//Insert what was posted from last form.
 	$sql = "UPDATE Notice

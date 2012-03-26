@@ -1,6 +1,6 @@
 <?php
-
-	include('db_connect.php');
+	//Connect to the database with PDO, provide a connection.
+	$conn = include 'db_connect.php';
 	
 	//Insert what was posted from last form.
 	$stmt = $conn->prepare('INSERT INTO Teams (teamName, password, emergencyPhone) VALUES(:name, :pass, :phone)');

@@ -1,7 +1,7 @@
 <?php
 
 	//Attempt connection to UC2011 database
-	include("db_connect.php");
+	$conn = include 'db_connect.php';
 	
 	// Encrypt the password sent from the form.
 	$pwd = sha1($_POST['password']);

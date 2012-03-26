@@ -1,6 +1,6 @@
 <?php
 
-	include('db_connect.php');
+	$conn = include 'db_connect.php';
 	
 	//Insert what was posted from last form.
 	$stmt = $conn->prepare('UPDATE Teams SET teamName=:name,password=:pass,emergencyPhone=:phone WHERE teamNum=:id');
