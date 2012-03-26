@@ -1,5 +1,5 @@
 <?php
 
-echo "Version 0.9.doovalackey.thingemy";
+echo "Version 0.999999999999~";
 
 ?>
