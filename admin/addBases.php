@@ -92,7 +92,7 @@ Longitude (decimal): <input type="text" name="long" /><br />
 		echo "<h2 id=\"notice\">Base successfully edited</h2>";
 	}
 	// Database connection
-	include_once("db_helper/db_connect.php");
+	$conn = include 'db_helper/db_connect.php';
   	
   	echo "<h3>Current Bases:</h3>";
   	
