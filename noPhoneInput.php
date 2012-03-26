@@ -59,7 +59,7 @@ a:hover {
 <?php
 	/******* DATABASE CONNECTION ********/
 	
-	include("admin/db_helper/db_connect.php");
+	$conn = include 'admin/db_helper/db_connect.php';
 	
 	$stmt = $conn->query("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
 	$noticeRow = $stmt->fetch(PDO::FETCH_OBJ);
