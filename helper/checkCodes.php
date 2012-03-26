@@ -2,7 +2,7 @@
 	date_default_timezone_set('Australia/Brisbane');
 	
 	//Attempt to connect to the Urban Challenge database
-	include("../admin/db_helper/db_connect.php");
+	$conn = include '../admin/db_helper/db_connect.php';
 	$currentCode = 1;
 	$triggered = FALSE;
 	$userPassComboCorrect = FALSE;

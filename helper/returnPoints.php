@@ -3,7 +3,7 @@
 
     
 	// Connect to the database
-	include("../admin/db_helper/db_connect.php");
+	$conn = include '../admin/db_helper/db_connect.php';
   	
 	
 	/* Old code */
