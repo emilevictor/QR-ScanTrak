@@ -58,7 +58,7 @@ a:hover {
 	$baseID = $_GET['baseNum'];
 	
 	/******* DATABASE CONNECTION ********/
-	include_once("db_helper/db_connect.php");
+	$conn = include 'db_helper/db_connect.php';
 	
 	$result = $conn->prepare("SELECT * FROM Bases WHERE baseID=:id");
 	$result->bindValue(':id', $baseID);
