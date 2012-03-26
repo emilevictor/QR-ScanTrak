@@ -33,7 +33,7 @@
 	
 	$stmt->bindParam(':timestamp', date('Y-m-d H:i:s'));
 	$stmt->bindParam(':teamNum', $_POST['teamNum']);
-	$stmt->bindParam(':baseScanPoints', $_POST['teamNum']);
+	$stmt->bindParam(':baseScanPoints', $_POST['baseScanPoints']);
 	
 	//The comment is essentially your last name, followed by the comment.
 	$comment = $_SESSION['lastname'] . ": " . $_POST['comment'];
@@ -50,7 +50,7 @@
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 	
 	//Add points to their score
-	$totalScore = $result['SUM(baseScanPoints)'];
+	$totalScore = $result['SUM(baseScanPoints)'] + $_POST['baseScanPoints'];
 	
 	//This is used to get the 
 	$stmt = $conn->prepare('UPDATE Teams SET totalScore=:totalScore WHERE teamNum=:teamNum');
