@@ -43,7 +43,7 @@ a:hover {
 		echo "<img src=\"images/fatMan.jpg\"><br /><br />";
 	}
 	/******* DATABASE CONNECTION ********/
-	include("admin/db_helper/db_connect.php");
+	$conn = include 'admin/db_helper/db_connect.php';
   
 	echo "<img src=\"images/UCLogoInverted.jpg\"><br />";
 	echo "<h1>Check your team's score</h1>";

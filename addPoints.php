@@ -1,7 +1,7 @@
 <?php
 
 	//Attempt connection to UC2011 database
-	include("admin/db_helper/db_connect.php");
+	$conn = include 'admin/db_helper/db_connect.php';
 	
 	/* Check that the QR code hasn't been scanned. */
 	$stmt = $conn->prepare('SELECT * FROM Timestamps WHERE teamNum=:teamNum AND baseID=:baseID');
