@@ -43,7 +43,7 @@ tr { background-color: #333333}
 	/* Include the GoogleQR class */
 	require_once 'GooglPHP.php';
 	//Attempt connection to UC2011 database
-	include("db_connect.php");
+	$conn = include 'db_connect.php';
 	
 	// Create Goo.gl link
 	$strLongUrl = "http://www.urbanchallenge.com.au/index.php?q=" . $_POST['basePassword'];

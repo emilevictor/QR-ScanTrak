@@ -1,6 +1,6 @@
 <?php
 	//Connect to database
-	include("db_connect.php");
+	$conn = include 'db_connect.php';
   	
 	//Query the database
   	$result = $conn->prepare("DELETE FROM Bases WHERE baseID=:id");
