@@ -16,16 +16,7 @@
 	include("db_helper/checkForAuthentication.php");
 	
 	//Attempt connection to UC2011 database
-	include("db_helper/db_connect.php");
-	
-
-
-
-
-	// Fuck. This. You can do it Emile. - rmccue
-
-
-
+	$conn = include 'db_helper/db_connect.php';
 
 	/* Amount of elements per page */
 	$perPage = 30;
@@ -73,8 +64,14 @@
 	$startPageAt = $_GET[page] * $perPage;
 	
 	/* Count the number of scans. This is used for the number of elements. */
-	$query = mysql_query("select count(actionID) from Timestamps ".$searchText);
-	$row = mysql_fetch_array($query);
+	
+	$stmt = $conn->prepare('select count(actionID) from Timestamps :searchText');
+	$stmt->bindValue(':searchText',$searchText);
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	
+	//$query = mysql_query("select count(actionID) from Timestamps ".$searchText);
+	//$row = mysql_fetch_array($query);
 	
 	$pages = ($row[0] + $perPage - 1) / $perPage;
 	
@@ -82,9 +79,22 @@
 	/* Now query the database JUST for the fragment of elements shown on this page. */
 	/* Also, if the searchText is not empty, add it where appropriate. */
 	if ($searchText != "") {
-		$query = mysql_query("select * from Timestamps ".$searchText."order by actionID desc limit $startPageAt,$perPage");
+		$stmt = $conn->prepare('select * from Timestamps :searchText order by actionID desc limit :startPageAt,:perPage');
+		$stmt->bindValue(':searchText',$searchText);
+		$stmt->bindValue(':startPageAt',$startPageAt);
+		$stmt->bindValue(':perPage',$perPage);
+		$stmt->execute();
+		//$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		
+		
+		//$query = mysql_query("select * from Timestamps ".$searchText."order by actionID desc limit $startPageAt,$perPage");
 	} else {
-		$query = mysql_query("select * from Timestamps order by actionID desc limit $startPageAt,$perPage");
+		
+		$stmt = $conn->prepare('select * from Timestamps order by actionID desc limit :startPageAt,:perPage');
+		$stmt->bindValue(':startPageAt',$startPageAt);
+		$stmt->bindValue(':perPage',$perPage);
+		$stmt->execute();
+		//$query = mysql_query("select * from Timestamps order by actionID desc limit $startPageAt,$perPage");
 	}
 	
 	?>
@@ -130,7 +140,7 @@
 	  <th align=\"left\">Comment</th>
   	</tr>";
 	
-	while($row = mysql_fetch_array($query)) {
+	while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 	  	echo "<tr onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
 	  	echo "<td>" . $row['teamNum'] . "</td>";
 	  	if ($row['baseID'] == NULL) {
@@ -147,7 +157,7 @@
 	echo "</div>";
 	
 	echo $pageLinks;
-	mysql_close($con);
+	//mysql_close($con);
 ?>
 
 </body>

@@ -111,8 +111,8 @@ function updateClock ( )
           Current time is <span id="clock">&nbsp;</span></h2>
         <div id="nav-menu">
             <ul>
-            <!-- <li><a href="addTeams.php">Add/Edit Teams</a></li> -->
-            <!-- <li><a href="addBases.php">Add/Edit QR Codes</a></li> -->
+            <li><a href="addTeams.php">Add/Edit Teams</a></li>
+            <li><a href="addBases.php">Add/Edit QR Codes</a></li>
             <li><a href="pleaseOrPunish.php">Please or Punish</a></li>
             <li><a href="timestamps_paginated.php">View/Search Scans</a></li>
             <li><a href="editNotice.php">Change HQ Notice to Teams</a></li>

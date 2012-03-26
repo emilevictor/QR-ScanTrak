@@ -36,7 +36,7 @@
 	$stmt->bindParam(':baseScanPoints', $_POST['teamNum']);
 	
 	//The comment is essentially your last name, followed by the comment.
-	$comment = $_SESSION['lastname'] . $_POST['comment'];
+	$comment = $_SESSION['lastname'] . ": " . $_POST['comment'];
 	
 	$stmt->bindParam(':comment', $comment);	
 	
