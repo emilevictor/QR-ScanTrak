@@ -65,6 +65,8 @@
 	
 	/* Count the number of scans. This is used for the number of elements. */
 	
+	echo "select count(actionID) from Timestamps " . $searchText;
+		
 	$stmt = $conn->prepare('select count(actionID) from Timestamps :searchText');
 	$stmt->bindValue(':searchText',$searchText);
 	$stmt->execute();

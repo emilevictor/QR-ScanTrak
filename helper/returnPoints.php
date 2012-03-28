@@ -88,7 +88,6 @@ a:hover {
   	$result->bindValue(':num', $_POST['tNum']);
 	$row = $result->fetch(PDO::FETCH_ASSOC);
 	$totalScore = $row['SUM(baseScanPoints)'];
-	
 	$result = $conn->query("SELECT noticeNum, title, body FROM Notice WHERE noticeNum = 1");
 	$row = $result->fetch(PDO::FETCH_OBJ);
 	

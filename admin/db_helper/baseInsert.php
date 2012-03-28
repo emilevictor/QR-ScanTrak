@@ -41,12 +41,17 @@ tr { background-color: #333333}
 <body>
 <?php
 	/* Include the GoogleQR class */
-	require_once 'GooglPHP.php';
+	include("GooglPHP.php");
+	//Include global settings
+	include("../SETTINGS.php");
+
 	//Attempt connection to UC2011 database
 	$conn = include 'db_connect.php';
 	
 	// Create Goo.gl link
-	$strLongUrl = "http://www.urbanchallenge.com.au/index.php?q=" . $_POST['basePassword'];
+	//TODO: add option in some config file which will specify which URL to change this to.
+	$strLongUrl = $_WEBSITE_ROOT_URL_ . "index.php?q=" . $_POST['basePassword'];
+	echo $strLongUrl;
 	$strShortUrl = GooglPHP::shortURL($strLongUrl);
 	
 	//Insert what was posted from last form.
@@ -70,7 +75,7 @@ tr { background-color: #333333}
 	echo "Successfully added base " . $_POST['teamName'];
 	
 	echo "<br /><img src=\"images/mrbean.jpg\">";
-	echo "<br />Emile says hi, Matt.";
+	echo "<br />Emile says hi, Matt." . $strShortUrl;
 	
 	echo "<br /><a href=\"../addBases.php\">Back to work, fool. Add some more bases.</a>";
 ?>
