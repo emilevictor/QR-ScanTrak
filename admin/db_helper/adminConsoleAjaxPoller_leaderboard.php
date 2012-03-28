@@ -28,5 +28,4 @@
   	}
   	echo "</table>";
 	
-	mysql_close($con);
 ?>
