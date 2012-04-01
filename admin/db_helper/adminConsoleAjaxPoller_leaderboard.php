@@ -17,13 +17,13 @@
   	<th align=\"left\">Team Score</th>
   	</tr>";
   	
-  	while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+  	while($row = $stmt->fetch(PDO::FETCH_OBJ)) {
   		echo "<tr onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
   		echo "<td bgcolor=\"black\" color=\"white\" align=\"center\"><b>" . $place . "</b></td>";
   		$place++;
-  		echo "<td>" . $row['teamNum'] . "</td>";
-  		echo "<td>" . $row['teamName'] . "</td>";
-  		echo "<td>" . $row['totalScore'] . "</td>";
+  		echo "<td>" . $row->teamNum . "</td>";
+  		echo "<td>" . $row->teamName . "</td>";
+  		echo "<td>" . $row->totalScore . "</td>";
   		echo "</tr>";
   	}
   	echo "</table>";

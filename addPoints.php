@@ -7,6 +7,7 @@
 	$stmt = $conn->prepare('SELECT * FROM Timestamps WHERE teamNum=:teamNum AND baseID=:baseID');
 	$stmt->bindValue(':teamNum', $_POST['tNum']);
 	$stmt->bindValue(':baseID', $_POST['baseID']);
+	$stmt->execute();
 	$allowScan = ($stmt->rowCount() === 0);
 
 	if (!$allowScan) {
@@ -31,10 +32,14 @@
 
 	//Check that the score for base is currently 0.
 	if ($_POST['boolRequireTrivia'] == 1) {
-		$result = mysql_query("SELECT * FROM Bases WHERE baseID='" . $_POST['baseID'] . "'") or die(mysql_error());
-		$row = mysql_fetch_array($result);
-		if ($row['baseAnswer'] != $_POST['triviaAnswer']) {
-			header('Location: index.php?q='.$_POST[basePassword].'&success=epicfail');
+		$stmt = $conn->prepare('SELECT * FROM Bases where baseID=:baseID');
+		$stmt->bindValue(':baseID',$_POST['baseID']);
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_OBJ);
+
+		if ($row->baseAnswer != $_POST['triviaAnswer'])
+		{
+			header('Location: index.php?q='.$_POST[basePassword].'&success=epicfail');	
 			die();
 		}
 	}
@@ -76,22 +81,44 @@ a:hover {
 <?php 	
 			
 	/**** get the number of points to be added to score ******/
-	$result = mysql_query("SELECT * FROM Bases WHERE baseID='" . $_POST['baseID'] . "'") or die(mysql_error());
-	$row = mysql_fetch_array($result);
-	$pointsToBeAdded = $row['baseScanPoints'];
-				
+	$stmt = $conn->prepare('SELECT * FROM Bases WHERE baseID=:baseID');
+	$stmt->bindValue(':baseID',$_POST['baseID']);
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_OBJ);
+	$pointsToBeAdded = $row->baseScanPoints;
+
+	echo "I am about to add ". $pointsToBeAdded . "points\n";
+
 	/* Update the timestamps */
-	mysql_query("INSERT INTO Timestamps (timestamp, teamNum, baseID, baseScanPoints)
-		VALUES (NOW(), '" . $_POST['tNum'] . "', '" . $_POST['baseID'] . "','" . $pointsToBeAdded . "')") or die(mysql_error());
+	$stmt = $conn->prepare('INSERT INTO Timestamps (timestamp, teamNum, baseID, baseScanPoints) VALUES (NOW(), :tNum, :baseID, :pointsToBeAdded)');
+	$stmt->bindValue(':tNum',$_POST['tNum']);
+	$stmt->bindValue(':baseID',$_POST['baseID']);
+	$stmt->bindValue(':pointsToBeAdded',$pointsToBeAdded);
+	$stmt->execute();
+
+
+	//mysql_query("INSERT INTO Timestamps (timestamp, teamNum, baseID, baseScanPoints)
+	//	VALUES (NOW(), '" . $_POST['tNum'] . "', '" . $_POST['baseID'] . "','" . $pointsToBeAdded . "')") or die(mysql_error());
 	
 	
 	/******* Update team's total in database ********/
-	$result = mysql_query("SELECT teamNum, SUM(baseScanPoints) FROM Timestamps WHERE teamNum='" . $_POST['tNum'] . "' GROUP BY teamNum") or die(mysql_error());
-	$row = mysql_fetch_array($result);
-	$totalScore = $row['SUM(baseScanPoints)'];
-	$result = mysql_query("SELECT * FROM Teams WHERE teamNum='".$_POST['tNum']."'");
-	$row = mysql_fetch_array($result);
-	mysql_query("UPDATE Teams SET totalScore='".$totalScore."' WHERE teamNum='".$_POST['tNum']."'")  or die(mysql_error());
+	$stmt = $conn->prepare('SELECT teamNum, SUM(baseScanPoints) FROM Timestamps WHERE teamNum=:teamNum GROUP BY teamNum');
+	$stmt->bindValue(':teamNum',$_POST['tNum']);
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_NUM);
+	$totalScore = $row[1];
+	
+	echo "TOTAL SCORE IS:" . $totalScore;
+	$stmt = $conn->prepare('UPDATE Teams SET totalScore=:totalScore WHERE teamNum=:teamNum');
+	$stmt->bindValue(':totalScore',$totalScore);
+	$stmt->bindValue(':teamNum',$_POST['tNum']);
+	$stmt->execute();
+	//$result = mysql_query("SELECT teamNum, SUM(baseScanPoints) FROM Timestamps WHERE teamNum='" . $_POST['tNum'] . "' GROUP BY teamNum") or die(mysql_error());
+	//$row = mysql_fetch_array($result);
+	//$totalScore = $row['SUM(baseScanPoints)'];
+	//$result = mysql_query("SELECT * FROM Teams WHERE teamNum='".$_POST['tNum']."'");
+	//$row = mysql_fetch_array($result);
+	//mysql_query("UPDATE Teams SET totalScore='".$totalScore."' WHERE teamNum='".$_POST['tNum']."'")  or die(mysql_error());
 	echo "Added " . $score . " points to team " . $_POST['tNum'] . ". New total score is " . $totalScore . ".";
 ?>
 </body>
